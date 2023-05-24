@@ -1,0 +1,1 @@
+powershell -c ./setup.ps1
