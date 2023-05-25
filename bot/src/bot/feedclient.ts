@@ -57,7 +57,7 @@ export class FeedClient {
       }))
     );
 
-    queue = queue.splice(-15).sort(() => 0.5 - Math.random());
+    queue = queue.splice(0, -15).sort(() => 0.5 - Math.random());
 
     this.feedQueue.set(info.guildId, queue);
   };
