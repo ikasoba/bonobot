@@ -12,7 +12,7 @@ const config: Config = await (async () => {
   const res = await loadConfig(".config.json");
 
   if (res.error) {
-    console.log(res.result);
+    res.result;
     process.exit(1);
   }
 
@@ -37,7 +37,7 @@ const token = await (async (): Promise<string> => {
   } catch (_) {
     const tmp = process.env.TOKEN;
     if (tmp == null || tmp == "") {
-      console.log("環境変数 TOKEN を読み込みましたがトークンが空でした。");
+      ("環境変数 TOKEN を読み込みましたがトークンが空でした。");
       process.exit(1);
     }
     return tmp;

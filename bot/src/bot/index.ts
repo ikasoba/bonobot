@@ -8,6 +8,9 @@ import {
   Client,
   CommandInteraction,
   ChatInputCommandInteraction,
+  Channel,
+  APIEmbed,
+  JSONEncodable,
 } from "discord.js";
 import { Config } from "../config/config.js";
 import ms from "ms";
@@ -51,7 +54,7 @@ export class BonoBot extends DiscordBot {
   async start(token: string) {
     await this.client.login(token);
 
-    console.log("bot started.");
+    console.info("bot started.");
 
     await this.feedClient.start();
   }
@@ -64,26 +67,33 @@ export class BonoBot extends DiscordBot {
       return;
     }
 
+    queueItem.item;
+
+    const url = new URL(queueItem.item.link!);
+    url.hostname;
+
+    let image = queueItem.feed.image;
+    let video = undefined;
+
+    if (url.hostname.match(/^(www\.)?youtube\.com$/)) {
+      const id = url.searchParams.get("v")!;
+
+      image = {
+        url: `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
+      };
+    }
+
     await channel.send({
       embeds: [
         {
-          author: {
-            name: queueItem.info.name ?? queueItem.feed.title ?? "RSSフィード",
-            url:
-              queueItem.item.link ?? queueItem.info.url ?? queueItem.feed.link,
-          },
-
-          thumbnail: queueItem.feed.image && {
-            url: queueItem.feed.image.url,
-          },
-
-          title: queueItem.feed.title,
-
-          description:
-            queueItem.item.content &&
-            kawaiiSlice(queueItem.item.content, 0, 150),
-
+          ...(video ? { video } : { image }),
+          title: "🔗" + queueItem.feed.title,
+          description: `[${
+            queueItem.item.title && kawaiiSlice(queueItem.item.title, 0, 150)
+          }](${url})`,
           url: queueItem.item.link,
+          timestamp:
+            queueItem.item.pubDate && new Date(queueItem.item.pubDate).toJSON(),
         },
       ],
     });
@@ -104,20 +114,21 @@ export class BonoBot extends DiscordBot {
       required: true,
     },
   ])
-  setConfig(
+  async setConfig(
     interaction: ChatInputCommandInteraction,
     name: keyof Config,
     value: string
   ) {
+    await interaction.deferReply({ ephemeral: true });
     if (!interaction.memberPermissions?.has("Administrator")) return;
 
     if (name == "feedInterval" || name == "feedSendInterval") {
       this.config[name] = ms(value);
+      await interaction.editReply("✅ 設定値はちゃんと設定できました。");
+      return;
     }
 
-    interaction.reply("設定値はちゃんと設定できました。");
-
-    interaction.reply(
+    await interaction.editReply(
       "👺 何かエラーが起きたかも知れないけど、その原因は不明です。"
     );
   }
@@ -131,14 +142,20 @@ export class BonoBot extends DiscordBot {
       choices: configChoice,
     },
   ])
-  getConfig(interaction: ChatInputCommandInteraction, name: keyof Config) {
+  async getConfig(
+    interaction: ChatInputCommandInteraction,
+    name: keyof Config
+  ) {
+    await interaction.deferReply({ ephemeral: true });
+    this;
     if (!interaction.memberPermissions?.has("Administrator")) return;
 
     if (name == "feedInterval" || name == "feedSendInterval") {
-      interaction.reply(ms(this.config[name]));
+      await interaction.editReply(ms(this.config[name]));
+      return;
     }
 
-    interaction.reply(
+    await interaction.editReply(
       "👺 何かエラーが起きたかも知れないけど、その原因は不明です。"
     );
   }
@@ -162,23 +179,121 @@ export class BonoBot extends DiscordBot {
     messageId: string,
     channelId?: string
   ) {
+    await interaction.deferReply({ ephemeral: true });
     const channel = channelId
       ? await interaction.guild?.channels.fetch(channelId)
       : interaction.channel;
 
     if (channel == null || !channel.isTextBased()) {
-      interaction.reply("チャンネルIDが不正です。");
+      await interaction.editReply("👺 チャンネルIDが不正です。");
       return;
     }
 
     const message = await channel.messages.fetch(messageId);
     if (message == null) {
-      interaction.reply("メッセージIDが不正です。");
+      await interaction.editReply("👺 メッセージIDが不正です。");
       return;
     }
 
-    interaction.reply(
+    await interaction.editReply(
       "```\n" + message.content.replaceAll("`", "\\`") + "\n```"
     );
+  }
+
+  @SlashCommand("set-rss-feed", "RSSフィードを追加します", [
+    {
+      name: "feed-url",
+      description: "RSSフィードのURL",
+      type: CmdOptionType.String,
+      required: true,
+    },
+    {
+      name: "feed-name",
+      description: "RSSフィードの名前",
+      type: CmdOptionType.String,
+      required: true,
+    },
+    {
+      name: "feed-dest",
+      description: "RSSフィードの宛先",
+      type: CmdOptionType.Channel,
+      required: false,
+    },
+  ])
+  async setRssFeed(
+    interaction: ChatInputCommandInteraction,
+    url: string,
+    name: string,
+    dest?: Channel
+  ) {
+    await interaction.deferReply({ ephemeral: true });
+
+    this.feedReader.set(
+      interaction.guildId!,
+      dest?.id ?? interaction.channelId,
+      name,
+      url
+    );
+
+    await interaction.editReply("✅ 正常に設定を変更できました。");
+  }
+
+  @SlashCommand("get-all-rss-feed", "RSSフィードを表示します", [])
+  async getAllRssFeed(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply({ ephemeral: true });
+
+    const feedinfos = await this.feedReader.getAll(interaction.guildId!);
+
+    if (feedinfos.length == 0) {
+      await interaction.editReply("フィードが空っぽです。");
+      return;
+    }
+
+    await interaction.editReply({
+      embeds: feedinfos.map((info) => ({
+        title: info.name,
+        timestamp: info.createdAt.toJSON(),
+        fields: [
+          {
+            name: "宛先",
+            value: "<#" + info.destChannelId + ">",
+          },
+          {
+            name: "フィードURL",
+            value: info.url,
+          },
+        ],
+      })),
+    });
+  }
+
+  @SlashCommand("delete-rss-feed", "RSSフィードを削除します", [
+    {
+      name: "feed-name",
+      description: "RSSフィードの名前",
+      type: CmdOptionType.String,
+      required: true,
+    },
+  ])
+  async deleteRssFeed(interaction: ChatInputCommandInteraction, name: string) {
+    await interaction.deferReply({ ephemeral: true });
+
+    this.feedReader.delete(interaction.guildId!, name);
+
+    await interaction.editReply("✅ 正常に設定を削除できました。");
+  }
+
+  @SlashCommand("urokosay", "👺 < 判断が遅い", [
+    {
+      type: CmdOptionType.String,
+      name: "serif",
+      description: "セリフ",
+      required: false,
+    },
+  ])
+  async urokosay(interaction: ChatInputCommandInteraction, serif?: string) {
+    await interaction.deferReply();
+    serif ??= "判断が遅い";
+    await interaction.editReply(`👺 < ${serif}`);
   }
 }

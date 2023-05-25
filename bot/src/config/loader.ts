@@ -9,7 +9,7 @@ export async function loadConfig(path: string) {
     raw = await fs.readFile(path, "utf-8");
   } catch (e) {
     const config: Config = {
-      feedInterval: ms("3m"),
+      feedInterval: ms("15m"),
       feedSendInterval: ms("3m"),
     };
 
@@ -29,7 +29,7 @@ export async function reloadConfig(obj: any, path: string) {
   const res = await loadConfig(path);
 
   if (res.error) {
-    console.log(res.result);
+    res.result;
     process.exit(1);
   }
 

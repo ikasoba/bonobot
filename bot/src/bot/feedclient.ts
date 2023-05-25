@@ -14,18 +14,20 @@ export class FeedClient {
     feedReader.listeners.add(this.onUpdate);
   }
 
-  start() {
+  async start() {
     const self = this;
 
     /** フィードを取得 */
-    (async function f() {
+    await (async function f() {
+      console.info("fetch rss feeds.");
       await self.feedReader.check();
 
       setTimeout(f, self.config.feedInterval);
     })();
 
     /** フィードに送信 */
-    (async function f() {
+    await (async function f() {
+      console.info("post new rss item.");
       await self.onTick();
 
       setTimeout(f, self.config.feedSendInterval);
@@ -46,16 +48,23 @@ export class FeedClient {
         item: item,
       }))
     );
+
+    queue = queue.splice(-15).sort(() => 0.5 - Math.random());
+
+    this.feedQueue.set(info.guildId, queue);
   };
 
   onTick = async () => {
     for (let [_, queue] of this.feedQueue.entries()) {
-      queue = queue.splice(-50);
-
       const queueItem = queue.pop();
       if (queueItem == null) continue;
 
       this.sendFeedQueueItem(queueItem);
     }
+  };
+
+  check = async () => {
+    await this.feedReader.check();
+    await this.onTick();
   };
 }

@@ -120,9 +120,9 @@ export class FeedReader {
             ? new Date(feedItem.isoDate)
             : new Date();
 
-          if (item.lastDate && createdAt.getTime() < item.lastDate.getTime()) {
-            return false;
-          }
+          // if (item.lastDate && createdAt.getTime() < item.lastDate.getTime()) {
+          //   return false;
+          // }
 
           return true;
         });

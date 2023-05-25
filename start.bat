@@ -1,0 +1,1 @@
+powershell -c ./start.ps1
