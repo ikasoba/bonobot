@@ -5,6 +5,10 @@ import { FeedReader, FeedUpdateListener } from "../rss/index.js";
 
 export class FeedClient {
   private feedQueue: Map<string, FeedQueueItem[]> = new Map();
+  private currentDaemonId: [null | NodeJS.Timeout, null | NodeJS.Timeout] = [
+    null,
+    null,
+  ];
 
   constructor(
     private sendFeedQueueItem: (queueItem: FeedQueueItem) => Promise<void>,
@@ -22,7 +26,7 @@ export class FeedClient {
       console.info("fetch rss feeds.");
       await self.feedReader.check();
 
-      setTimeout(f, self.config.feedInterval);
+      self.currentDaemonId[0] = setTimeout(f, self.config.feedInterval);
     })();
 
     /** フィードに送信 */
@@ -30,8 +34,12 @@ export class FeedClient {
       console.info("post new rss item.");
       await self.onTick();
 
-      setTimeout(f, self.config.feedSendInterval);
+      self.currentDaemonId[1] = setTimeout(f, self.config.feedSendInterval);
     })();
+  }
+
+  stop() {
+    this.currentDaemonId.forEach((x) => x && clearTimeout(x));
   }
 
   onUpdate: FeedUpdateListener = async (feed, info, updates) => {

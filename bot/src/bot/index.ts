@@ -236,6 +236,9 @@ export class BonoBot extends DiscordBot {
     );
 
     await interaction.editReply("✅ 正常に設定を変更できました。");
+
+    await this.feedClient.stop();
+    await this.feedClient.start();
   }
 
   @SlashCommand("get-all-rss-feed", "RSSフィードを表示します", [])
