@@ -53,6 +53,8 @@ export class FeedReader {
       await this.tempstore.set(guildId, value);
     }
 
+    console.log(value)
+
     for (const item of value) {
       if (item.name == name) {
         item.url = url;

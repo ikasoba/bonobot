@@ -49,9 +49,8 @@ export class FeedClient {
       this.feedQueue.set(info.guildId, queue);
     }
 
-    console.log(info, updates)
-
-    queue.unshift(
+    cons
+    queue.push(
       ...updates.map((item) => ({
         feed: feed,
         info: info,
@@ -61,7 +60,7 @@ export class FeedClient {
 
 	console.info("appended feed queue")
 
-    queue = queue.sort(() => 0.5 - Math.random()).splice(-15);
+    queue = queue.splice(0, -15).sort(() => 0.5 - Math.random());
 
     this.feedQueue.set(info.guildId, queue);
   };

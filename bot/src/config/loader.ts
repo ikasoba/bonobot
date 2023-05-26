@@ -5,9 +5,13 @@ import fs from "fs/promises";
 export async function loadConfig(path: string) {
   const state: { error?: Error } = {};
   let raw: string;
+  console.info("lead configures")
   try {
-    raw = await fs.readFile(path, "utf-8");
+    raw = await fs.readFile(path, "utf-8")
+    console.info("success config loading")
+    console.log(raw)
   } catch (e) {
+    console.error(e)
     const config: Config = {
       feedInterval: ms("15m"),
       feedSendInterval: ms("3m"),

@@ -29,7 +29,7 @@ const feedReader: FeedReader = new FeedReader(
   tempstore as any as TempStore<FeedInfo[]>
 );
 
-const bonoBot = new BonoBot(client, config, feedReader, ".tempstore.json");
+const bonoBot = new BonoBot(client, config, feedReader, ".config.json");
 
 const token = await (async (): Promise<string> => {
   try {
