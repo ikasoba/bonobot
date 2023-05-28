@@ -344,11 +344,8 @@ export class BonoBot extends DiscordBot {
         (
           balloon +
           "\n" +
-          " ".repeat(serif.length / 2 - maxLineSize / 2) +
-          asciiart.replaceAll(
-            "\n",
-            "\n" + " ".repeat(serif.length / 2 - maxLineSize / 2)
-          )
+          " ".repeat(serif.length / 2) +
+          asciiart.replaceAll("\n", "\n" + " ".repeat(serif.length / 2))
         ).replaceAll("`", "\\`") +
         "\n```"
     );
