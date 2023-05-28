@@ -323,14 +323,16 @@ export class BonoBot extends DiscordBot {
   ])
   async cowsay(interaction: ChatInputCommandInteraction, serif: string) {
     await interaction.deferReply();
+    const length =
+      (serif.length ?? 0) + (serif.match(/[^\u0000-\u00ff]/g)?.length ?? 0);
     let balloon =
       " --" +
-      "-".repeat(serif?.length) +
+      "-".repeat(length) +
       "\n< " +
       serif +
       " >\n" +
       " --" +
-      "-".repeat(serif?.length);
+      "-".repeat(length);
     let asciiart = (
       "¥  ^__^\n" +
       " ¥ (oo)¥_______\n" +
