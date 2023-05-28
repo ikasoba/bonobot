@@ -325,7 +325,7 @@ export class BonoBot extends DiscordBot {
     await interaction.deferReply();
     const length =
       (serif.length ?? 0) +
-      (serif.match(/[^\u0000-\u00ff]/g)?.length ?? 0) * 0.9;
+      Math.round((serif.match(/[^\u0000-\u00ff]/g)?.length ?? 0) * 0.9);
     let balloon =
       " --" +
       "-".repeat(length) +
