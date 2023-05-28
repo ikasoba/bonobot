@@ -312,6 +312,43 @@ export class BonoBot extends DiscordBot {
     serif ??= "判断が遅い";
     await interaction.editReply(`👺 < ${serif}`);
   }
+
+  @SlashCommand("cowsay", "(oo)", [
+    {
+      type: CmdOptionType.String,
+      name: "serif",
+      description: "セリフ",
+      required: true,
+    },
+  ])
+  async cowsay(interaction: ChatInputCommandInteraction, serif: string) {
+    await interaction.deferReply();
+    let balloon =
+      " " +
+      "-".repeat(serif?.length) +
+      "\n<" +
+      serif +
+      ">\n" +
+      "-".repeat(serif?.length) +
+      "\n";
+    let asciiart = (
+      "¥  ^__^\n" +
+      " ¥ (oo)¥_______\n" +
+      "   (__)¥       )¥/¥\n" +
+      "       ||----¥ |\n" +
+      "       ||     ||\n"
+    ).replaceAll("¥", "\\");
+    const maxLineSize =
+      asciiart.split("\n").sort((a, b) => b.length - a.length)[0]?.length ?? 1;
+    await interaction.editReply(
+      balloon +
+        asciiart.replaceAll(
+          "\n",
+          "\n" + " ".repeat(serif.length / 2 + maxLineSize / 2)
+        )
+    );
+  }
+
   @SlashCommand("get-emoji-id", "絵文字のIDを取得します", [
     {
       type: CmdOptionType.String,
@@ -321,7 +358,7 @@ export class BonoBot extends DiscordBot {
     },
   ])
   async getEmojiId(interaction: ChatInputCommandInteraction, emoji: string) {
-    console.log(emoji);
     await interaction.deferReply({ ephemeral: true });
+    await interaction.reply("````\n" + emoji + "```");
   }
 }
