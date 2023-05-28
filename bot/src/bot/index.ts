@@ -85,6 +85,17 @@ export class BonoBot extends DiscordBot {
       };
     }
 
+    let title;
+    let content;
+
+    if (queueItem.item.content) {
+      title = queueItem.item.title ?? queueItem.feed.title;
+      content = queueItem.item.content;
+    } else {
+      title = queueItem.feed.title;
+      content = queueItem.item.content;
+    }
+
     console.info("sending");
 
     await channel.send({
@@ -94,12 +105,10 @@ export class BonoBot extends DiscordBot {
             name: queueItem.info.name,
           },
           ...(video ? { video } : { image }),
-          title: "🔗" + queueItem.item.title ?? queueItem.feed.title,
+          title: "🔗" + title,
           description: `${
-            queueItem.item.content
-              ? kawaiiSlice(cheerio.load(queueItem.item.content).text(), 0, 150)
-              : queueItem.item.title
-              ? kawaiiSlice(cheerio.load(queueItem.item.title).text(), 0, 150)
+            content
+              ? kawaiiSlice(cheerio.load(content).text(), 0, 150)
               : undefined
           }`,
           url: queueItem.item.link,
