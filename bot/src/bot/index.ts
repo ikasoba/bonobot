@@ -329,6 +329,7 @@ export class BonoBot extends DiscordBot {
       "\n<" +
       serif +
       ">\n" +
+      " " +
       "-".repeat(serif?.length);
     let asciiart = (
       "¥  ^__^\n" +
