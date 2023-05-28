@@ -16,6 +16,7 @@ import { Config } from "../config/config.js";
 import ms from "ms";
 import { FeedClient } from "./feedclient.js";
 import fs from "fs/promises";
+import * as cheerio from "cheerio";
 
 export const configChoice = [
   {
@@ -96,9 +97,9 @@ export class BonoBot extends DiscordBot {
           title: "🔗" + queueItem.feed.title,
           description: `${
             queueItem.item.content
-              ? kawaiiSlice(queueItem.item.content, 0, 150)
+              ? cheerio.load(kawaiiSlice(queueItem.item.content, 0, 150)).text()
               : queueItem.item.title
-              ? kawaiiSlice(queueItem.item.title, 0, 150)
+              ? cheerio.load(kawaiiSlice(queueItem.item.title, 0, 150)).text()
               : undefined
           }`,
           url: queueItem.item.link,

@@ -22,6 +22,7 @@
   "dependencies": {
     "@ikasoba000/distroub": "^0.1.5",
     "@ikasoba000/tempstore": "^1.0.9",
+    "cheerio": "1.0.0-rc.12",
     "discord.js": "^14.11.0",
     "ms": "^2.1.3",
     "reflect-metadata": "^0.1.13",
