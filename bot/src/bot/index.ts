@@ -97,9 +97,9 @@ export class BonoBot extends DiscordBot {
           title: "🔗" + queueItem.feed.title,
           description: `${
             queueItem.item.content
-              ? cheerio.load(kawaiiSlice(queueItem.item.content, 0, 150)).text()
+              ? kawaiiSlice(cheerio.load(queueItem.item.content).text(), 0, 150)
               : queueItem.item.title
-              ? cheerio.load(kawaiiSlice(queueItem.item.title, 0, 150)).text()
+              ? kawaiiSlice(cheerio.load(queueItem.item.title).text(), 0, 150)
               : undefined
           }`,
           url: queueItem.item.link,
