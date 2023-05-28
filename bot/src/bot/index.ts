@@ -94,10 +94,8 @@ export class BonoBot extends DiscordBot {
             name: queueItem.info.name,
           },
           ...(video ? { video } : { image }),
-          title: "🔗" + queueItem.feed.title,
+          title: "🔗" + queueItem.item.title ?? queueItem.feed.title,
           description: `${
-            queueItem.item.title ? "# " + queueItem.item.title : ""
-          }${
             queueItem.item.content
               ? kawaiiSlice(cheerio.load(queueItem.item.content).text(), 0, 150)
               : queueItem.item.title
