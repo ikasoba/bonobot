@@ -93,7 +93,7 @@ export class BonoBot extends DiscordBot {
       content = queueItem.item.content;
     } else {
       title = queueItem.feed.title;
-      content = queueItem.item.content;
+      content = queueItem.item.title;
     }
 
     console.info("sending");
