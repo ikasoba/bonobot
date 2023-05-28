@@ -77,14 +77,6 @@ export class BonoBot extends DiscordBot {
     let image = queueItem.feed.image;
     let video = undefined;
 
-    if (url.hostname.match(/^(www\.)?youtube\.com$/)) {
-      const id = url.searchParams.get("v")!;
-
-      image = {
-        url: `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
-      };
-    }
-
     let title;
     let content;
 
@@ -94,6 +86,23 @@ export class BonoBot extends DiscordBot {
     } else {
       title = queueItem.feed.title;
       content = queueItem.item.title;
+    }
+
+    if (url.hostname.match(/^(www\.)?youtube\.com$/)) {
+      const id = url.searchParams.get("v")!;
+
+      image = {
+        url: `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
+      };
+    }
+    if (content) {
+      const $ = cheerio.load(content);
+      let url = $("img").attr("src");
+      if (url) {
+        image = {
+          url: url,
+        };
+      }
     }
 
     console.info("sending");
