@@ -329,23 +329,27 @@ export class BonoBot extends DiscordBot {
       "\n<" +
       serif +
       ">\n" +
-      "-".repeat(serif?.length) +
-      "\n";
+      "-".repeat(serif?.length);
     let asciiart = (
       "¥  ^__^\n" +
       " ¥ (oo)¥_______\n" +
       "   (__)¥       )¥/¥\n" +
       "       ||----¥ |\n" +
-      "       ||     ||\n"
+      "       ||     ||"
     ).replaceAll("¥", "\\");
     const maxLineSize =
       asciiart.split("\n").sort((a, b) => b.length - a.length)[0]?.length ?? 1;
     await interaction.editReply(
-      balloon +
-        asciiart.replaceAll(
-          "\n",
-          "\n" + " ".repeat(serif.length / 2 + maxLineSize / 2)
-        )
+      "```\n" +
+        (
+          balloon +
+          "\n" +
+          asciiart.replaceAll(
+            "\n",
+            "\n" + " ".repeat(serif.length / 2 + maxLineSize / 2)
+          )
+        ).replaceAll("`", "\\`") +
+        "\n```"
     );
   }
 
