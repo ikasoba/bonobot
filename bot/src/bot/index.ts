@@ -1,7 +1,6 @@
 import { ClientEvent, DiscordBot, SlashCommand } from "@ikasoba000/distroub";
 import { TempStore } from "@ikasoba000/tempstore";
 import { FeedInfo, FeedReader, FeedUpdateListener } from "../rss/index.js";
-import { Item as FeedItem, Output as FeedOutput } from "rss-parser";
 import { kawaiiSlice } from "../util/kawaiiSlice.js";
 import {
   ApplicationCommandOptionType as CmdOptionType,
@@ -14,7 +13,7 @@ import {
 } from "discord.js";
 import { Config } from "../config/config.js";
 import ms from "ms";
-import { FeedClient } from "./feedclient.js";
+import { FeedClient, FeedQueueItem } from "./feedclient.js";
 import fs from "fs/promises";
 import * as cheerio from "cheerio";
 
@@ -28,12 +27,6 @@ export const configChoice = [
     value: "feedSendInterval" satisfies keyof Config,
   },
 ];
-
-export interface FeedQueueItem {
-  feed: FeedOutput<{ [k: string]: any }>;
-  info: FeedInfo;
-  item: FeedItem;
-}
 
 export class BonoBot extends DiscordBot {
   private feedClient;
@@ -85,16 +78,9 @@ export class BonoBot extends DiscordBot {
       content = queueItem.item.content;
     } else {
       title = queueItem.feed.title;
-      content = queueItem.item.title;
+      content = queueItem.item.description ?? queueItem.item.title;
     }
 
-    if (url.hostname.match(/^(www\.)?youtube\.com$/)) {
-      const id = url.searchParams.get("v")!;
-
-      image = {
-        url: `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
-      };
-    }
     if (content) {
       const $ = cheerio.load(content);
       let url = $("img").attr("src");
@@ -103,6 +89,14 @@ export class BonoBot extends DiscordBot {
           url: url,
         };
       }
+    }
+
+    if (url.hostname.match(/^(www\.)?youtube\.com$/)) {
+      const id = url.searchParams.get("v")!;
+
+      image = {
+        url: `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
+      };
     }
 
     console.info("sending");

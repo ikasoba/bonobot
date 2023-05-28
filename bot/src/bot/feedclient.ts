@@ -1,7 +1,13 @@
 import { Client } from "discord.js";
-import { FeedQueueItem } from "./index.js";
 import { Config } from "../config/config.js";
-import { FeedReader, FeedUpdateListener } from "../rss/index.js";
+import { FeedInfo, FeedReader, FeedUpdateListener } from "../rss/index.js";
+import { Item as FeedItem, Output as FeedOutput } from "rss-parser";
+
+export interface FeedQueueItem {
+  feed: FeedOutput<{ [k: string]: any }>;
+  info: FeedInfo;
+  item: { [k: string]: string | undefined } & FeedItem;
+}
 
 export class FeedClient {
   private feedQueue: Map<`${string}:${string}`, FeedQueueItem[]> = new Map();
@@ -55,7 +61,7 @@ export class FeedClient {
       ...updates.map((item) => ({
         feed: feed,
         info: info,
-        item: item,
+        item: item as { [k: string]: undefined | string } & FeedItem,
       }))
     );
 
