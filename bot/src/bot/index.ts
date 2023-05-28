@@ -15,7 +15,7 @@ import {
 import { Config } from "../config/config.js";
 import ms from "ms";
 import { FeedClient } from "./feedclient.js";
-import fs from "fs/promises"
+import fs from "fs/promises";
 
 export const configChoice = [
   {
@@ -84,7 +84,7 @@ export class BonoBot extends DiscordBot {
       };
     }
 
-	console.info("sending")
+    console.info("sending");
 
     await channel.send({
       embeds: [
@@ -128,12 +128,16 @@ export class BonoBot extends DiscordBot {
     if (name == "feedInterval" || name == "feedSendInterval") {
       this.config[name] = ms(value);
       try {
-				await fs.writeFile(this.configPath, JSON.stringify(this.config, null, "  "), "utf-8")
-	      await interaction.editReply("✅ 設定値はちゃんと設定できました。");
-      	return;
-			}catch(e){
-				console.error(e)
-			}
+        await fs.writeFile(
+          this.configPath,
+          JSON.stringify(this.config, null, "  "),
+          "utf-8"
+        );
+        await interaction.editReply("✅ 設定値はちゃんと設定できました。");
+        return;
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     await interaction.editReply(
@@ -233,9 +237,8 @@ export class BonoBot extends DiscordBot {
     url: string,
     name: string,
     dest?: Channel
-  )
-  {
-	  if (!interaction.memberPermissions?.has("Administrator")) return;
+  ) {
+    if (!interaction.memberPermissions?.has("Administrator")) return;
     await interaction.deferReply({ ephemeral: true });
 
     this.feedReader.set(
@@ -308,5 +311,17 @@ export class BonoBot extends DiscordBot {
     await interaction.deferReply();
     serif ??= "判断が遅い";
     await interaction.editReply(`👺 < ${serif}`);
+  }
+  @SlashCommand("get-emoji-id", "絵文字のIDを取得します", [
+    {
+      type: CmdOptionType.String,
+      name: "emoji",
+      description: "絵文字",
+      required: true,
+    },
+  ])
+  async getEmojiId(interaction: ChatInputCommandInteraction, emoji: string) {
+    console.log(emoji);
+    await interaction.deferReply({ ephemeral: true });
   }
 }

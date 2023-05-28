@@ -4,7 +4,7 @@ import { Config } from "../config/config.js";
 import { FeedReader, FeedUpdateListener } from "../rss/index.js";
 
 export class FeedClient {
-  private feedQueue: Map<string, FeedQueueItem[]> = new Map();
+  private feedQueue: Map<`${string}:${string}`, FeedQueueItem[]> = new Map();
   private currentDaemonId: [null | NodeJS.Timeout, null | NodeJS.Timeout] = [
     null,
     null,
@@ -43,13 +43,13 @@ export class FeedClient {
   }
 
   onUpdate: FeedUpdateListener = async (feed, info, updates) => {
-    let queue = this.feedQueue.get(info.guildId);
+    let queue = this.feedQueue.get(`${info.destChannelId}:${info.guildId}`);
     if (queue == null) {
       queue = [];
-      this.feedQueue.set(info.guildId, queue);
+      this.feedQueue.set(`${info.destChannelId}:${info.guildId}`, queue);
     }
 
-    console.log(info, updates)
+    console.log(info, updates);
 
     queue.unshift(
       ...updates.map((item) => ({
@@ -59,17 +59,17 @@ export class FeedClient {
       }))
     );
 
-	console.info("appended feed queue")
+    console.info("appended feed queue");
 
     queue = queue.sort(() => 0.5 - Math.random()).splice(-15);
 
-    this.feedQueue.set(info.guildId, queue);
+    this.feedQueue.set(`${info.destChannelId}:${info.guildId}`, queue);
   };
 
   onTick = async () => {
     for (let [_, queue] of this.feedQueue.entries()) {
-      console.log(queue)
-	const queueItem = queue.pop();
+      console.log(queue);
+      const queueItem = queue.pop();
       if (queueItem == null) continue;
 
       this.sendFeedQueueItem(queueItem);
