@@ -89,11 +89,18 @@ export class BonoBot extends DiscordBot {
     await channel.send({
       embeds: [
         {
+          author: {
+            name: queueItem.info.name,
+          },
           ...(video ? { video } : { image }),
           title: "🔗" + queueItem.feed.title,
-          description: `[${
-            queueItem.item.title && kawaiiSlice(queueItem.item.title, 0, 150)
-          }](${url})`,
+          description: `${
+            queueItem.item.content
+              ? kawaiiSlice(queueItem.item.content, 0, 150)
+              : queueItem.item.title
+              ? kawaiiSlice(queueItem.item.title, 0, 150)
+              : undefined
+          }`,
           url: queueItem.item.link,
           timestamp:
             queueItem.item.pubDate && new Date(queueItem.item.pubDate).toJSON(),
