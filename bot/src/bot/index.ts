@@ -39,6 +39,7 @@ export class BonoBot extends BanSyncBot {
     private configPath: string,
     banSyncBotStore: TempStore<string[]>
   ) {
+    console.log("B-", banSyncBotStore);
     super(client, banSyncBotStore);
 
     this.feedClient = new FeedClient(

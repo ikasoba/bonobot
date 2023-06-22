@@ -35,6 +35,8 @@ const banSyncBotStore = new TempStore(
   await JSONProvider.create(".banSyncStore.json")
 ) as TempStore<string[]>;
 
+console.log("A-", banSyncBotStore);
+
 const bonoBot = new BonoBot(
   client,
   config,
