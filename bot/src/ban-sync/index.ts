@@ -39,7 +39,7 @@ export class BanSyncBot extends DiscordBot {
     {
       type: ApplicationCommandOptionType.String,
       description: "サーバーID",
-      name: "serverId",
+      name: "server-id",
       required: true,
     },
   ])
@@ -97,7 +97,7 @@ export class BanSyncBot extends DiscordBot {
     {
       type: ApplicationCommandOptionType.String,
       description: "サーバーID",
-      name: "serverId",
+      name: "server-id",
       required: true,
     },
   ])
