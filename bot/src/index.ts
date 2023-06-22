@@ -20,7 +20,7 @@ const config: Config = await (async () => {
 })();
 
 const client = new Client({
-  intents: ["GuildMessages", "GuildEmojisAndStickers", "Guilds"],
+  intents: ["GuildMessages", "GuildEmojisAndStickers", "Guilds", "GuildBans"],
 });
 
 const feedReaderStore = new TempStore(
