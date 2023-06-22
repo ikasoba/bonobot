@@ -23,13 +23,25 @@ const client = new Client({
   intents: ["GuildMessages", "GuildEmojisAndStickers", "Guilds"],
 });
 
-const tempstore = new TempStore(await JSONProvider.create(".tempstore.json"));
-
-const feedReader: FeedReader = new FeedReader(
-  tempstore as any as TempStore<FeedInfo[]>
+const feedReaderStore = new TempStore(
+  await JSONProvider.create(".tempstore.json")
 );
 
-const bonoBot = new BonoBot(client, config, feedReader, ".config.json");
+const feedReader: FeedReader = new FeedReader(
+  feedReaderStore as any as TempStore<FeedInfo[]>
+);
+
+const banSyncBotStore = new TempStore(
+  await JSONProvider.create(".banSyncStore.json")
+) as TempStore<string[]>;
+
+const bonoBot = new BonoBot(
+  client,
+  config,
+  feedReader,
+  ".config.json",
+  banSyncBotStore
+);
 
 const token = await (async (): Promise<string> => {
   try {

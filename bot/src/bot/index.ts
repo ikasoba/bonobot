@@ -16,6 +16,7 @@ import ms from "ms";
 import { FeedClient, FeedQueueItem } from "./feedclient.js";
 import fs from "fs/promises";
 import * as cheerio from "cheerio";
+import { BanSyncBot } from "../ban-sync/index.js";
 
 export const configChoice = [
   {
@@ -30,14 +31,19 @@ export const configChoice = [
 
 export class BonoBot extends DiscordBot {
   private feedClient;
+  private banSyncBot: BanSyncBot;
 
   constructor(
     client: Client,
     private config: Config,
     private feedReader: FeedReader,
-    private configPath: string
+    private configPath: string,
+    banSyncBotStore: TempStore<string[]>
   ) {
     super(client);
+
+    // global ban用の機能をインスコ
+    this.banSyncBot = new BanSyncBot(client, banSyncBotStore);
 
     this.feedClient = new FeedClient(
       (...a) => this.sendFeedQueueItem(...a),
@@ -141,7 +147,12 @@ export class BonoBot extends DiscordBot {
     value: string
   ) {
     await interaction.deferReply({ ephemeral: true });
-    if (!interaction.memberPermissions?.has("Administrator")) return;
+    if (!interaction.memberPermissions?.has("Administrator")) {
+      await interaction.editReply(
+        "👺 サーバーの管理者のみ設定を変更できます。"
+      );
+      return;
+    }
 
     if (name == "feedInterval" || name == "feedSendInterval") {
       this.config[name] = ms(value);
@@ -151,7 +162,7 @@ export class BonoBot extends DiscordBot {
           JSON.stringify(this.config, null, "  "),
           "utf-8"
         );
-        await interaction.editReply("✅ 設定値はちゃんと設定できました。");
+        await interaction.editReply("✅ 設定値をちゃんと設定できました。");
         return;
       } catch (e) {
         console.error(e);
@@ -178,7 +189,12 @@ export class BonoBot extends DiscordBot {
   ) {
     await interaction.deferReply({ ephemeral: true });
     this;
-    if (!interaction.memberPermissions?.has("Administrator")) return;
+    if (!interaction.memberPermissions?.has("Administrator")) {
+      await interaction.editReply(
+        "👺 サーバーの管理者のみ設定を変更できます。"
+      );
+      return;
+    }
 
     if (name == "feedInterval" || name == "feedSendInterval") {
       await interaction.editReply(ms(this.config[name]));
