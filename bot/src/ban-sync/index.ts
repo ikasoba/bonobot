@@ -28,6 +28,7 @@ export class BanSyncBot extends DiscordBot {
 
   @ClientEvent("guildBanRemove")
   async onGuildBanRemove(ban: GuildBan) {
+    console.log(this.store, this.constructor, this);
     const listeners = await this.store.get(ban.guild.id);
     if (listeners == null) return;
 
