@@ -20,7 +20,7 @@
     "typescript": "5.0.4"
   },
   "dependencies": {
-    "@ikasoba000/distroub": "^0.1.5",
+    "@ikasoba000/distroub": "^0.1.7",
     "@ikasoba000/tempstore": "^1.0.9",
     "cheerio": "1.0.0-rc.12",
     "discord.js": "^14.11.0",

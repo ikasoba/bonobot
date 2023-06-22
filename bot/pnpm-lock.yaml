@@ -1,9 +1,13 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@ikasoba000/distroub':
-    specifier: ^0.1.5
-    version: 0.1.5
+    specifier: ^0.1.7
+    version: 0.1.7
   '@ikasoba000/tempstore':
     specifier: ^1.0.9
     version: 1.0.9
@@ -32,7 +36,7 @@ devDependencies:
     version: 2.0.22
   ts-node:
     specifier: ^10.9.1
-    version: 10.9.1(@types/node@20.2.3)(typescript@5.0.4)
+    version: 10.9.1(@types/node@20.3.1)(typescript@5.0.4)
   typescript:
     specifier: 5.0.4
     version: 5.0.4
@@ -108,10 +112,11 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@ikasoba000/distroub@0.1.5:
-    resolution: {integrity: sha512-Lgg77Rb4GTyeUP2IksaOJblrJW+4PhrcMBcmq6OPv5047zRtqiPjPbIgYJFoQCYbojmDLO14R2a6J3wWFYEE6g==}
+  /@ikasoba000/distroub@0.1.7:
+    resolution: {integrity: sha512-5uE9Xw7D5dhe4AKNO2qiZ3iwqT/BJZN4yZXrBdmhqmBL8f31gKFAZHZL9n8luNTTBOmat0gYP/dIDngLN/MTxA==}
     dependencies:
       discord.js: 14.11.0
+      reflect-metadata: 0.1.13
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -181,6 +186,11 @@ packages:
 
   /@types/node@20.2.3:
     resolution: {integrity: sha512-pg9d0yC4rVNWQzX8U7xb4olIOFuuVL9za3bzMT2pu2SU0SNEi66i2qrvhE2qt0HvkhuCaWJu7pLNOt/Pj8BIrw==}
+    dev: false
+
+  /@types/node@20.3.1:
+    resolution: {integrity: sha512-EhcH/wvidPy1WeML3TtYFGR83UzjxeWRen9V402T8aUGYsCHOmfoisV3ZSg03gAFIbLq8TnWOJ0f4cALtnSEUg==}
+    dev: true
 
   /@types/ws@8.5.4:
     resolution: {integrity: sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg==}
@@ -675,7 +685,7 @@ packages:
     resolution: {integrity: sha512-k43M7uCG1AkTyxgnmI5MPwKoUvS/bRvLvUb7+Pgpdlmok8AoqmUaZxUUw8zKM5B1lqZrt41GjYgnvAi0fppqgQ==}
     dev: false
 
-  /ts-node@10.9.1(@types/node@20.2.3)(typescript@5.0.4):
+  /ts-node@10.9.1(@types/node@20.3.1)(typescript@5.0.4):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -694,7 +704,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.2.3
+      '@types/node': 20.3.1
       acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
