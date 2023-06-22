@@ -15,8 +15,6 @@ export class BanSyncBot extends DiscordBot {
 
   @ClientEvent("guildBanAdd")
   async onGuildBanAdd(ban: GuildBan) {
-    console.log(this.store, this.constructor, this);
-
     const listeners = await this.store.get(ban.guild.id);
     if (listeners == null) return;
 
@@ -28,13 +26,14 @@ export class BanSyncBot extends DiscordBot {
 
   @ClientEvent("guildBanRemove")
   async onGuildBanRemove(ban: GuildBan) {
-    console.log(this.store, this.constructor, this);
     const listeners = await this.store.get(ban.guild.id);
     if (listeners == null) return;
 
     for (const guildId of listeners) {
       const guild = await this.client.guilds.fetch(guildId);
-      await guild.bans.remove(ban.user.id);
+      if (guild.bans.resolve(ban.user.id)) {
+        await guild.bans.remove(ban.user.id);
+      }
     }
   }
 
