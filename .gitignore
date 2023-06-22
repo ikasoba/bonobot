@@ -4,3 +4,4 @@ node_modules/
 TOKEN.txt
 .config.json
 .tempstore.json
+.banSyncStore.json

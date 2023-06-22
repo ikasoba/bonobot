@@ -29,9 +29,8 @@ export const configChoice = [
   },
 ];
 
-export class BonoBot extends DiscordBot {
+export class BonoBot extends BanSyncBot {
   private feedClient;
-  private banSyncBot: BanSyncBot;
 
   constructor(
     client: Client,
@@ -40,10 +39,7 @@ export class BonoBot extends DiscordBot {
     private configPath: string,
     banSyncBotStore: TempStore<string[]>
   ) {
-    super(client);
-
-    // global ban用の機能をインスコ
-    this.banSyncBot = new BanSyncBot(client, banSyncBotStore);
+    super(client, banSyncBotStore);
 
     this.feedClient = new FeedClient(
       (...a) => this.sendFeedQueueItem(...a),
